@@ -1,0 +1,14 @@
+{
+  "name": "탐구의 궤적 · 합격·불합격 생기부 탐구 사례집",
+  "short_name": "탐구의 궤적",
+  "description": "학생부 PDF로 세특·창체 탐구 매트릭스와 면접 대비 노트를 담은 PDF 자료집을 만듭니다.",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#FFF4E8",
+  "theme_color": "#F27A62",
+  "lang": "ko",
+  "icons": [
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "apple-touch-icon.png", "sizes": "180x180", "type": "image/png" }
+  ]
+}
