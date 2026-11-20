@@ -821,7 +821,7 @@ window.LISTS = {
     ["실험·측정", /실험(?!실)|측정(?:하|함|했|한 결과|값|치를|치)|배양|현미경|관찰 ?일지|시약|적정 실험|분광기|검출/],
     ["설문조사", /설문|질문지/],
     ["인터뷰·면담", /인터뷰|면담/],
-    ["통계·데이터", /통계|데이터를? (?:수집|분석|정리|시각화|비교)|데이터 분석|상관관계|표준편차|회귀 ?분석|수치화|지니계수|분위 배율|그래프로 (?:나타|정리|시각|표현)|빅데이터|데이터를? 시각화|시각화하여 (?:분석|비교|정리)/],
+    ["통계·데이터", /통계|신뢰구간|표본을? (?:추출|분석)|층화 추출|데이터를? (?:수집|분석|정리|시각화|비교)|데이터 분석|상관관계|표준편차|회귀 ?분석|수치화|지니계수|분위 배율|그래프로 (?:나타|정리|시각|표현)|빅데이터|데이터를? 시각화|시각화하여 (?:분석|비교|정리)/],
     ["문헌·논문", /논문|학술|선행 ?연구|문헌|연구 결과|연구 자료|DBpia|KCI/i],
     ["기사·자료 조사", /기사를|기사와|신문|자료를? (?:조사|수집|찾)|(?:을|를|에 대해|에 대하여) (?:구체적으로 |추가로 |직접 )?조사(?:하|함|해)|리서치/],
     ["사례 분석", /사례를? (?:분석|조사|비교|들어)|판례|사례 연구/],
@@ -932,6 +932,8 @@ window.LISTS = {
       if (!cur || (start && cur.ss.some((x) => SIGNAL.test(x)))) { cur = { ss: [s] }; U.push(cur); }
       else cur.ss.push(s);
     }
+    // 한 문장짜리 짧은 단위(주제만 밝힌 문장)는 뒤 단위와 합친다
+    for (let i = U.length - 2; i >= 0; i--) if (U[i].ss.length === 1 && U[i].ss[0].length < 80) { U[i + 1].ss.unshift(...U[i].ss); U.splice(i, 1); }
     return U;
   }
   function units(text, max = 3) {
@@ -1278,7 +1280,8 @@ td > a.go { float: right; }
 
 /* ===== 고급 조판: 양쪽 정렬 · 어절 단위 줄바꿈 · 절제된 장식 ===== */
 body { word-break: keep-all; line-break: strict; hanging-punctuation: allow-end; font-kerning: normal; }
-.tc .ds, .ca .tp, table.iv td div, table.bk td.a, .raw p, .hlg p, .howto p, .privacy, .cover .l .sub { text-align: justify; text-align-last: left; }
+table.iv td div, .raw p, .howto p, .privacy, .cover .l .sub { text-align: justify; text-align-last: left; }
+.tc .ds, .ca .tp, .hlg p, table.bk td.a { text-align: left; }
 .tc .tp, .ca .an, .hlg p, table.iv td b { font-family: var(--serif); letter-spacing: -.01em; }
 .tc .tp { font-size: 8.5pt; font-weight: 700; color: var(--navy); line-height: 1.38; }
 .tc .ds { font-size: 7.9pt; line-height: 1.58; }
@@ -1297,6 +1300,10 @@ table.mx thead th { letter-spacing: .02em; font-weight: 600; }
 /* 표지: 접힌 종이학 */
 .cover .r .crane2 { position: absolute; left: 10mm; right: 10mm; top: 52mm; }
 .cover .r .crane2 svg { width: 100%; display: block; }
+
+.cover .l .smp { display: inline-block; margin: 2mm 0 0; font: 700 8.6pt var(--sans); color: #B8432F; border: .8pt solid #E8664E; padding: .8mm 3mm; border-radius: .8mm; align-self: flex-start; }
+
+.hl { overflow: hidden; }
 </script>
 <script type="text/plain" id="book-src">/* ============================================================
  * 자료집 조판: 데이터 → A4 가로 쪽 (직접 쪽 나눔)
@@ -1322,7 +1329,7 @@ table.mx thead th { letter-spacing: .02em; font-weight: 600; }
   const SECS = [["prof", "프로필"], ["subj", "교과"], ["ca", "창체"], ["read", "독서"], ["iv", "면접"], ["raw", "원문"]];
   function anchor(el, c, sec) { const id = `c${c.no}-${sec}`; el.id = id; anchors.push({ no: c.no, sec, id, page: el.closest(".page") }); }
   function makePage(ctx, cls = "") {
-    const p = h(`<section class="page ${cls}"><header class="ph"><img src="${B.logo}" alt="모두의진학"><span class="bk">${esc(B.title)}</span><span class="cs"></span></header><div class="pb"></div><footer class="pf"><span>모두의진학 · 학교 내부 상담용 · 비식별 자료</span><span class="no"></span></footer></section>`);
+    const p = h(`<section class="page ${cls}"><header class="ph"><img src="${B.logo}" alt="모두의진학"><span class="bk">${esc(B.title)}</span><span class="cs"></span></header><div class="pb"></div><footer class="pf"><span>${B.sample ? "가상 사례로 만든 견본 · 실제 학생·입시 결과와 무관" : "모두의진학 · 학교 내부 상담용 · 비식별 자료"}</span><span class="no"></span></footer></section>`);
     if (ctx) p.querySelector(".cs").innerHTML = `<a href="#c${ctx.no}-prof"><b>${esc(caseName(ctx))}</b></a><span>${esc(ctx.alias || "")}</span><span>${esc(ctx.hopeLine || "")}</span>${curTag(ctx)}<span class="rbadge ${caseResult(ctx)[1]}">${caseResult(ctx)[0]}</span>`;
     if (ctx) p.dataset.case = ctx.no;
     pages.appendChild(p); pageList.push(p);
@@ -1379,7 +1386,7 @@ table.mx thead th { letter-spacing: .02em; font-weight: 600; }
 
   // ---------- 표지 ----------
   function cover() {
-    const p = h(`<section class="page cover"><div class="in"><div class="l"><img class="logo" src="${B.logo}" alt="모두의진학"><p class="pre">${esc(B.subtitle)}</p><h1>탐구의 궤적<br><em>합격·불합격</em> 생기부<br>탐구 사례집</h1><p class="sub">선배들의 학생부를 교과·창체 매트릭스로 펼쳐, 무엇을 어떤 방법으로 탐구했고 어떤 책과 이어졌는지 사례로 읽습니다. 후배의 탐구 설계 상담에 쓰고, 학생부 기반 면접을 앞둔 학생은 자신의 탐구를 정리해 예상 질문에 대비합니다.</p>
+    const p = h(`<section class="page cover"><div class="in"><div class="l"><img class="logo" src="${B.logo}" alt="모두의진학"><p class="pre">${esc(B.subtitle)}</p>${B.sample ? `<p class="smp">가상 사례 견본 · 학생과 입시 결과는 모두 지어낸 것입니다</p>` : ""}<h1>탐구의 궤적<br><em>합격·불합격</em> 생기부<br>탐구 사례집</h1><p class="sub">선배들의 학생부를 교과·창체 매트릭스로 펼쳐, 무엇을 어떤 방법으로 탐구했고 어떤 책과 이어졌는지 사례로 읽습니다. 후배의 탐구 설계 상담에 쓰고, 학생부 기반 면접을 앞둔 학생은 자신의 탐구를 정리해 예상 질문에 대비합니다.</p>
       <div class="meta"><div><b>${B.cases.length}</b>수록 사례</div><div><b>${B.cases.filter((c) => caseResult(c)[1] === "r-pass").length}</b>합격 사례</div><div><b>${B.cases.filter((c) => c.curriculum === "2022").length}·${B.cases.filter((c) => c.curriculum !== "2022").length}</b>2022·2015 개정</div></div></div>
       <div class="r"><div class="em"><img src="${B.emblem}" alt=""></div><div class="crane2"><svg viewBox="0 0 520 400" aria-hidden="true"><polygon points="262,228 470,40 312,240" fill="#F49A82"/><polygon points="262,228 312,240 286,268" fill="#D9563F"/><polygon points="322,250 446,140 334,240" fill="#F9B9A4"/><polygon points="322,250 446,140 340,262" fill="#E8664E"/><polygon points="214,258 262,228 262,298" fill="#E8664E"/><polygon points="262,228 322,250 262,298" fill="#D9563F"/><polygon points="214,258 262,298 238,300" fill="#B8432F"/><polygon points="214,258 120,132 230,252" fill="#F27A62"/><polygon points="214,258 120,132 206,266" fill="#D9563F"/><polygon points="120,132 92,152 126,146" fill="#B8432F"/><polygon points="262,228 58,52 214,252" fill="#FCDACB"/><polygon points="262,228 214,252 238,270" fill="#F9B9A4"/><polygon points="58,52 150,170 214,252" fill="#FBE6DA"/></svg></div><p class="note"><b>${esc(B.issued)} 편집</b><br>학교 내부 보관 · 진학 상담 · 면접 대비용<br>학생부는 편집한 컴퓨터 안에서만 처리했고 어떤 서버에도 올리지 않았습니다.<br>이름·주민등록번호·주소·학교명은 지우고 사례 번호로만 표기했습니다.<br>외부 배포와 재식별 시도를 금합니다.</p></div></div></section>`);
     pages.appendChild(p); pageList.push(p);
@@ -1441,7 +1448,7 @@ table.mx thead th { letter-spacing: .02em; font-weight: 600; }
         <div class="glist">${Object.entries(st.byGroup).filter(([, v]) => v != null).map(([k, v]) => `<div><span>${k}</span><b>${fmt(v)}</b></div>`).join("")}${Object.keys(st.achCount).length ? `<div><span>성취도</span><b>${["A", "B", "C", "D", "E"].filter((k) => st.achCount[k]).map((k) => k + st.achCount[k]).join(" ")}</b></div>` : ""}</div></div>
       <div><h3>자주 쓴 탐구방법<small>■ 교과 ■ 창체</small></h3>${A.methods.slice(0, 10).map((m) => `<div class="mbar"><span>${esc(m.name)}</span><i><b style="width:${((m.src["교과"] || 0) / mMax) * 100}%"></b><b class="c" style="width:${((m.src["창체"] || 0) / mMax) * 100}%"></b></i><em>${m.n}</em></div>`).join("") || '<p class="mdesc">추출된 탐구방법이 없습니다.</p>'}</div></div>
     </div></div>
-    <div class="hl"><h3>학년별 대표 탐구<small>방법을 가장 다양하게 쓴 세특 탐구와 진로활동 · 자세한 내용은 다음 쪽 매트릭스</small></h3><div class="hlg">${[1, 2, 3].filter((y) => A.setuk.some((x) => x.year === y)).map((y) => { const us = A.setuk.filter((x) => x.year === y && x.group !== "체육·예술").flatMap((x) => x.units.map((u) => ({ ...u, where: x.label }))).sort((a, b) => b.methods.length - a.methods.length).slice(0, 4); const cr = (A.ca.find((x) => x.year === y && x.area === "진로") || { units: [] }).units.slice().sort((a, b) => b.methods.length - a.methods.length)[0]; return `<div><b class="yl">${y}학년</b>${us.map((u) => `<p><span>${esc(u.where)}</span>${esc(u.topic)}</p>`).join("")}${cr ? `<p class="cr"><span>진로활동</span>${esc(cr.topic)}</p>` : ""}</div>`; }).join("")}</div></div>`;
+    <div class="hl"><h3>학년별 대표 탐구<small>방법을 가장 다양하게 쓴 세특 탐구와 진로활동 · 자세한 내용은 다음 쪽 매트릭스</small></h3><div class="hlg">${[1, 2, 3].filter((y) => A.setuk.some((x) => x.year === y)).map((y) => { const us = A.setuk.filter((x) => x.year === y && x.group !== "체육·예술").flatMap((x) => x.units.map((u) => ({ ...u, where: x.label, topic: u.head || (u.desc && u.desc.length <= 70 ? u.desc : null) }))).filter((u) => u.topic).sort((a, b) => (b.head ? 2 : 0) + b.methods.length - (a.head ? 2 : 0) - a.methods.length).slice(0, 3); const cr = (A.ca.find((x) => x.year === y && x.area === "진로") || { units: [] }).units.map((u) => ({ ...u, topic: u.head || (u.desc && u.desc.length <= 70 ? u.desc : u.name) })).filter((u) => u.topic).sort((a, b) => b.methods.length - a.methods.length)[0]; return `<div><b class="yl">${y}학년</b>${us.map((u) => `<p><span>${esc(u.where)}</span>${esc(u.topic)}</p>`).join("")}${cr ? `<p class="cr"><span>진로활동</span>${esc(cr.topic)}</p>` : ""}</div>`; }).join("")}</div></div>`;
     return p;
   }
 
@@ -1630,6 +1637,7 @@ table.mx thead th { letter-spacing: .02em; font-weight: 600; }
       el.remove(); let best = 0;
       for (let k = rows.length - s0 - 1; k >= 1; k--) { const a = mk(s0, s0 + k); flow.box.appendChild(a); const ok = !flow.over(); a.remove(); if (ok) { best = k; break; } }
       if (best) { flow.box.appendChild(mk(s0, s0 + best)); flow.nextBox(); return rec(s0 + best); }
+      if (!flow.fresh) { flow.nextBox(); return rec(s0); }
       flow.box.appendChild(el); flow.fresh = false;
     };
     if (rows.length) rec(0);
