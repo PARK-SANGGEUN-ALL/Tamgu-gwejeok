@@ -14,24 +14,12 @@
 
 **이 저장소에는 학생부 PDF, 저장 파일(.json), 만든 자료집을 절대 올리지 마세요.** 공개 저장소는 누구나 볼 수 있습니다.
 
-## GitHub Pages로 올리기
+## GitHub Pages 주소
 
-1. 새 저장소를 만듭니다. 저장소 이름: `tamgu-gwejeok`
-2. 이 폴더의 파일 6개를 그대로 올립니다.
-   `index.html`, `manifest.webmanifest`, `thumbnail.png`, `icon-512.png`, `apple-touch-icon.png`, `favicon.png` (+ 이 `README.md`)
-3. **Settings → Pages → Branch: `main` / `(root)` → Save**
-4. 1~2분 뒤 `https://내아이디.github.io/tamgu-gwejeok/` 로 열립니다.
+- 저장소: https://github.com/PARK-SANGGEUN-ALL/Tamgu-gwejeok
+- 앱 주소: https://park-sanggeun-all.github.io/Tamgu-gwejeok/
 
-### 링크 썸네일이 나오게 하기 (한 번만)
-
-`index.html`을 GitHub에서 열어 연필(편집) 버튼을 누르고, `USERNAME`을 **내 GitHub 아이디**로 바꿔 저장합니다(3곳: `og:url`, `og:image`, `twitter:image`).
-
-```
-https://USERNAME.github.io/tamgu-gwejeok/thumbnail.png
-→ https://내아이디.github.io/tamgu-gwejeok/thumbnail.png
-```
-
-저장소 이름을 다르게 지었다면 `tamgu-gwejeok` 부분도 같이 바꿉니다. 카카오톡은 미리보기를 오래 기억하므로, 바꾼 뒤에도 예전 모습이 보이면 [카카오 공유 디버거](https://developers.kakao.com/tool/debugger/sharing)에서 주소를 넣고 ‘캐시 초기화’를 누릅니다.
+**Settings → Pages → Branch: `main` / `(root)` → Save** 후 1~2분 뒤 열립니다. 링크 썸네일(thumbnail.png) 주소는 index.html에 이미 들어 있습니다. 카카오톡에서 예전 미리보기가 보이면 [카카오 공유 디버거](https://developers.kakao.com/tool/debugger/sharing)에서 앱 주소를 넣고 ‘캐시 초기화’를 누릅니다.
 
 ## 대학·전형·모집단위 목록 출처
 
